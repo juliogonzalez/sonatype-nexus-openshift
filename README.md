@@ -1,3 +1,4 @@
+[![Build Status](https://jenkins-juliogonzalez.rhcloud.com/buildStatus/icon?job=sonatype-nexus-openshift-build)](https://jenkins-juliogonzalez.rhcloud.com/job/sonatype-nexus-openshift-build)
 Nexus on OpenShift
 ==================
 
