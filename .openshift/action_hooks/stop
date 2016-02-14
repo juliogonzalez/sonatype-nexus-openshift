@@ -1,0 +1,39 @@
+#!/bin/bash
+get_nexus_pid() {
+  local NEXUS_PID="$(ps -ef|grep java|grep "${OPENSHIFT_DATA_DIR}nexus/lib/*"|awk '{ print $2 }')"
+  echo "${NEXUS_PID}"
+  return ${NEXUS_PID}
+}
+
+is_running() {
+  local NEXUS_PID="$(get_nexus_pid)"
+  if [ "${NEXUS_PID}" != "" ]; then
+    echo "true"
+    return 0
+  else
+    echo "false"
+    return 1
+  fi
+}
+
+echo -n "Stopping nexus"
+KILLCOUNT=1
+while [ ${KILLCOUNT} -le 5 ]; do
+  if [ "$(is_running)" == "true" ]; then
+    kill $(get_nexus_pid)
+    echo -n '.'
+    sleep 5
+  else
+    break
+  fi
+  KILLCOUNT=$(( $KILLCOUNT + 1 ))
+done
+echo ''
+if [ "$(is_running)" == "true" ]; then
+  DAEMONPID=$(get_nexus_pid)
+  echo "Nexus not responding to TERM signal (pid $DAEMONPID)"
+  exit 1
+else
+  echo "Nexus stopped"
+  exit 0
+fi

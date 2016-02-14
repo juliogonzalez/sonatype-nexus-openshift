@@ -1,0 +1,19 @@
+#!/bin/bash
+set -x
+VERSION="2.11.4-01"
+if [ -d ${OPENSHIFT_DATA_DIR}nexus-${VERSION} ]; then
+  echo "Nexus ${VERSION} was already deployed!"
+  exit 0
+else
+  echo "Downloading Nexus ${VERSION}..."
+  wget http://www.sonatype.org/downloads/nexus-${VERSION}-bundle.tar.gz -O ${OPENSHIFT_DATA_DIR}nexus-${VERSION}-bundle.tar.gz
+  cd ${OPENSHIFT_DATA_DIR}
+  tar -xzf nexus-${VERSION}-bundle.tar.gz
+  rm -f nexus-${VERSION}-bundle.tar.gz
+  if [ -L ${OPENSHIFT_DATA_DIR}nexus ]; then
+    echo "Removing link to old Nexus..."
+    rm -f ${OPENSHIFT_DATA_DIR}nexus
+  fi
+  echo "Linking new Nexus ${VERSION}..."
+  ln -s ${OPENSHIFT_DATA_DIR}nexus-${VERSION} ${OPENSHIFT_DATA_DIR}nexus
+fi
