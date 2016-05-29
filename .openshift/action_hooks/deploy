@@ -1,15 +1,30 @@
 #!/bin/bash
 set -x
-VERSION="2.13.0-01"
+VERSION="3.0.0-03"
 if [ -d ${OPENSHIFT_DATA_DIR}nexus-${VERSION} ]; then
   echo "Nexus ${VERSION} was already deployed!"
   exit 0
 else
   echo "Downloading Nexus ${VERSION}..."
-  wget http://www.sonatype.org/downloads/nexus-${VERSION}-bundle.tar.gz -O ${OPENSHIFT_DATA_DIR}nexus-${VERSION}-bundle.tar.gz
+  wget http://download.sonatype.com/nexus/3/nexus-${VERSION}-unix.tar.gz -O ${OPENSHIFT_DATA_DIR}nexus-${VERSION}-unix.tar.gz
   cd ${OPENSHIFT_DATA_DIR}
-  tar -xzf nexus-${VERSION}-bundle.tar.gz
-  rm -f nexus-${VERSION}-bundle.tar.gz
+  tar -xzf nexus-${VERSION}-unix.tar.gz
+  rm -f nexus-${VERSION}-unix.tar.gz
+  echo "Configuring..."
+  sed -i -e "s/application-host=.*/application-host=${OPENSHIFT_DIY_IP}/" nexus-${VERSION}/etc/org.sonatype.nexus.cfg
+  sed -i -e "s/application-port=.*/application-port=${OPENSHIFT_DIY_PORT}/" nexus-${VERSION}/etc/org.sonatype.nexus.cfg
+  sed -i -e "s/-Xms.*M/-Xms${OPENSHIFT_GEAR_MEMORY_MB}M/" nexus-${VERSION}/bin/nexus.vmoptions
+  sed -i -e "s/-Xmx.*M/-Xmx${OPENSHIFT_GEAR_MEMORY_MB}M/" nexus-${VERSION}/bin/nexus.vmoptions
+  # Setup data dir outside nexus directory, so we can have the same data for several versions
+  echo "-Dkaraf.data=${OPENSHIFT_DATA_DIR}data" >> nexus-${VERSION}/bin/nexus.vmoptions
+  if [ ! -d ${OPENSHIFT_DATA_DIR}data ]; then
+    mkdir ${OPENSHIFT_DATA_DIR}data
+  fi
+  # Avoid warning regarding java prefs: https://issues.sonatype.org/browse/NEXUS-3671
+  if [ ! -d ${OPENSHIFT_DATA_DIR}.java ]; then
+    mkdir ${OPENSHIFT_DATA_DIR}.java
+  fi
+  echo "-Djava.util.prefs.userRoot=${OPENSHIFT_DATA_DIR}.java" >> nexus-${VERSION}/bin/nexus.vmoptions
   if [ -L ${OPENSHIFT_DATA_DIR}nexus ]; then
     echo "Removing link to old Nexus..."
     rm -f ${OPENSHIFT_DATA_DIR}nexus
