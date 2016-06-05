@@ -1,6 +1,9 @@
-[![Build Status](https://jenkins-juliogonzalez.rhcloud.com/buildStatus/icon?job=sonatype-nexus-openshift-build)](https://jenkins-juliogonzalez.rhcloud.com/job/sonatype-nexus-openshift-build)
-Nexus on OpenShift
-==================
+[![Build Status](https://jenkins-juliogonzalez.rhcloud.com/buildStatus/icon?job=sonatype-nexus2-openshift-build)](https://jenkins-juliogonzalez.rhcloud.com/job/sonatype-nexus2-openshift-build)
+
+**IMPORTANT:** These are instructions for Nexus 2.x. See [master branch](https://github.com/juliogonzalez/sonatype-nexus-openshift/tree/master) to deploy Nexus 3.x 
+
+Nexus 2.x on OpenShift
+======================
 
 This repository will deploy [Sonatype Nexus](http://www.sonatype.org/nexus/) to [Openshift](https://www.openshift.com/).
 
@@ -27,20 +30,24 @@ Second step is creating a new DIY (Do It Yourself) application.
 
 You can do it by using the CLI and running:
 ```
-rhc app-create nexus diy-0.1 --from-code https://github.com/juliogonzalez/sonatype-nexus-openshift.git
+rhc app-create nexus diy-0.1 --from-code https://github.com/juliogonzalez/sonatype-nexus-openshift.git#**REF**
 ```
+Replace **REF** with **nexus-2.x** if you want latest 2.x version available, or use a Nexus 2.x tag
+
 Or at the web interface:
 
 [https://openshift.redhat.com/app/console/applications](https://openshift.redhat.com/app/console/applications)
 
-And specifying https://github.com/juliogonzalez/sonatype-nexus-openshift.git at *Source Code*. In this case you can specify a tag if you do not want to install the current version.
+And specifying https://github.com/juliogonzalez/sonatype-nexus-openshift.git at *Source Code*.
+
+At *Branch/Tag* field specify **nexus-2.x** branch or a Nexus 2.x tag.
 
 Wait until the app is deployed
 ------------------------------
 
 After some time, your Nexus will be availabe at:
 
-[https://nexus-$yournamespace.rhcloud.com/](https://nexus-$yournamespace.rhcloud.com/)
+[https://$yourcartridgename-$yournamespace.rhcloud.com/](https://$yourcartridgename-$yournamespace.rhcloud.com/)
 
 The default nexus user is admin/admin123. Remember to change it!
 
@@ -55,9 +62,9 @@ Switch to your local cloned repository, and add a new remote pointing to my repo
 ```
 git remote add upstream https://github.com/juliogonzalez/sonatype-nexus-openshift.git
 ``` 
-Pull the changes, my changes will prevail over yours:
+Pull the changes, my changes will prevail over yours. Be sure you replace **REF** with **nexus-2.x** for latest 2.x version, or with a Nexus 2.x tag:
 ```
-git pull -s recursive -X theirs upstream master
+git pull -s recursive -X theirs upstream REF
 ```
 And, finally, push to your instance:
 ```
