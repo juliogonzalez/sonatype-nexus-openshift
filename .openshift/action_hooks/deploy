@@ -1,6 +1,6 @@
 #!/bin/bash
 set -x
-VERSION="3.0.0-03"
+VERSION="3.0.2-02"
 if [ -d ${OPENSHIFT_DATA_DIR}nexus-${VERSION} ]; then
   echo "Nexus ${VERSION} was already deployed!"
   exit 0
