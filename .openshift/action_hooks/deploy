@@ -15,6 +15,7 @@ else
   sed -i -e "s/application-port=.*/application-port=${OPENSHIFT_DIY_PORT}/" nexus-${VERSION}/etc/nexus-default.properties
   sed -i -e "s/-Xms.*M/-Xms${OPENSHIFT_GEAR_MEMORY_MB}M/" nexus-${VERSION}/bin/nexus.vmoptions
   sed -i -e "s/-Xmx.*M/-Xmx${OPENSHIFT_GEAR_MEMORY_MB}M/" nexus-${VERSION}/bin/nexus.vmoptions
+  sed -i -e "/-XX:MaxDirectMemorySize=.*/d" nexus-${VERSION}/bin/nexus.vmoptions
   # Setup data dir outside nexus directory, so we can have the same data for several versions
   echo "-Dkaraf.data=${OPENSHIFT_DATA_DIR}data" >> nexus-${VERSION}/bin/nexus.vmoptions
   if [ ! -d ${OPENSHIFT_DATA_DIR}data ]; then
