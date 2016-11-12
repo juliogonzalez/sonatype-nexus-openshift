@@ -11,8 +11,8 @@ else
   tar -xzf nexus-${VERSION}-unix.tar.gz
   rm -f nexus-${VERSION}-unix.tar.gz
   echo "Configuring..."
-  sed -i -e "s/application-host=.*/application-host=${OPENSHIFT_DIY_IP}/" nexus-${VERSION}/etc/org.sonatype.nexus.cfg
-  sed -i -e "s/application-port=.*/application-port=${OPENSHIFT_DIY_PORT}/" nexus-${VERSION}/etc/org.sonatype.nexus.cfg
+  sed -i -e "s/application-host=.*/application-host=${OPENSHIFT_DIY_IP}/" nexus-${VERSION}/etc/nexus-default.properties
+  sed -i -e "s/application-port=.*/application-port=${OPENSHIFT_DIY_PORT}/" nexus-${VERSION}/etc/nexus-default.properties
   sed -i -e "s/-Xms.*M/-Xms${OPENSHIFT_GEAR_MEMORY_MB}M/" nexus-${VERSION}/bin/nexus.vmoptions
   sed -i -e "s/-Xmx.*M/-Xmx${OPENSHIFT_GEAR_MEMORY_MB}M/" nexus-${VERSION}/bin/nexus.vmoptions
   # Setup data dir outside nexus directory, so we can have the same data for several versions
