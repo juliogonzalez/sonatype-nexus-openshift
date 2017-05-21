@@ -1,6 +1,6 @@
 #!/bin/bash
 set -x
-VERSION="3.1.0-04"
+VERSION="3.2.0-01"
 if [ -d ${OPENSHIFT_DATA_DIR}nexus-${VERSION} ]; then
   echo "Nexus ${VERSION} was already deployed!"
   exit 0
@@ -11,11 +11,13 @@ else
   tar -xzf nexus-${VERSION}-unix.tar.gz
   rm -f nexus-${VERSION}-unix.tar.gz
   echo "Configuring..."
+  MEM=$((OPENSHIFT_GEAR_MEMORY_MB-125))
   sed -i -e "s/application-host=.*/application-host=${OPENSHIFT_DIY_IP}/" nexus-${VERSION}/etc/nexus-default.properties
   sed -i -e "s/application-port=.*/application-port=${OPENSHIFT_DIY_PORT}/" nexus-${VERSION}/etc/nexus-default.properties
-  sed -i -e "s/-Xms.*M/-Xms${OPENSHIFT_GEAR_MEMORY_MB}M/" nexus-${VERSION}/bin/nexus.vmoptions
-  sed -i -e "s/-Xmx.*M/-Xmx${OPENSHIFT_GEAR_MEMORY_MB}M/" nexus-${VERSION}/bin/nexus.vmoptions
-  sed -i -e "/-XX:MaxDirectMemorySize=.*/d" nexus-${VERSION}/bin/nexus.vmoptions
+  sed -i -e "s/-Xms.*M/-Xms${MEM}M/" nexus-${VERSION}/bin/nexus.vmoptions
+  sed -i -e "s/-Xmx.*M/-Xmx${MEM}M/" nexus-${VERSION}/bin/nexus.vmoptions
+  #sed -i -e "/-XX:MaxDirectMemorySize=.*/d" nexus-${VERSION}/bin/nexus.vmoptions
+  sed -i -e "s/-XX:MaxDirectMemorySize=.*/-XX:MaxDirectMemorySize=90M/" nexus-${VERSION}/bin/nexus.vmoptions
   # Setup data dir outside nexus directory, so we can have the same data for several versions
   echo "-Dkaraf.data=${OPENSHIFT_DATA_DIR}data" >> nexus-${VERSION}/bin/nexus.vmoptions
   if [ ! -d ${OPENSHIFT_DATA_DIR}data ]; then
